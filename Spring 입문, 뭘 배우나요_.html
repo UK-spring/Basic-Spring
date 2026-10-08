@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spring 입문, 뭘 배우나요?</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F3F5F8; --surface:#FFFFFF; --ink:#18212D; --muted:#5B6675; --line:#D5DBE3; --soft:#E8ECF1;
+  --c1:#2563C9; --c1s:#E3ECFB; --c2:#B8700A; --c2s:#FBF0DD; --c3:#0F8A6B; --c3s:#DDF3EC;
+  --ok:#1E8E4E; --oks:#DDF3E5; --no:#C93A3A; --nos:#FBE3E3; --warn:#FFE7A3; --warnInk:#3B2E00;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12171E; --surface:#1A212B; --ink:#E6EBF1; --muted:#9AA6B5; --line:#2C3644; --soft:#222B37;
+    --c1:#6E9EF0; --c1s:#1D2B44; --c2:#E5A845; --c2s:#3A2D16; --c3:#45C49E; --c3s:#163A31;
+    --ok:#4CC27E; --oks:#173426; --no:#F07272; --nos:#3D1D1D; --warn:#5A4815; --warnInk:#FFF1C9;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12171E; --surface:#1A212B; --ink:#E6EBF1; --muted:#9AA6B5; --line:#2C3644; --soft:#222B37;
+  --c1:#6E9EF0; --c1s:#1D2B44; --c2:#E5A845; --c2s:#3A2D16; --c3:#45C49E; --c3s:#163A31;
+  --ok:#4CC27E; --oks:#173426; --no:#F07272; --nos:#3D1D1D; --warn:#5A4815; --warnInk:#FFF1C9;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans KR",-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;font-size:17px;line-height:1.65;word-break:keep-all}
+.mono{font-family:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--c1);outline-offset:2px;border-radius:6px}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+
+nav.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;gap:4px;align-items:center;height:56px;overflow-x:auto}
+nav.top a{flex:none;text-decoration:none;color:var(--muted);font-size:15px;padding:6px 12px;border-radius:999px}
+nav.top a:hover{background:var(--soft);color:var(--ink)}
+nav.top .brand{color:var(--ink);font-weight:700;margin-right:auto;padding-left:0}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.d1{background:var(--c1)}.d2{background:var(--c2)}.d3{background:var(--c3)}
+
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:12px;padding:10px 18px;font-weight:500}
+.btn.ghost{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.btn:disabled{opacity:.4;cursor:default}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px}
+
+/* hero */
+header.hero{padding:52px 0 8px;text-align:center}
+header.hero h1{font-size:clamp(28px,5vw,44px);line-height:1.3;margin:0 0 12px;letter-spacing:-.02em}
+header.hero p{color:var(--muted);margin:0 auto;max-width:30em}
+
+/* shop */
+.shop{margin:28px 0 80px;text-align:center}
+.lane-scroll{overflow-x:auto;padding:72px 4px 4px}
+.lane{position:relative;display:grid;grid-template-columns:repeat(4,minmax(120px,1fr));gap:12px;min-width:520px}
+.person{position:relative;background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:16px 8px 14px;transition:border-color .25s,transform .25s}
+.person .emo{font-size:46px;line-height:1.1;display:block}
+.person .role{font-weight:700;font-size:17px;display:block;margin-top:6px}
+.person .job{font-size:14px;color:var(--muted);display:block}
+.person .sp{display:none;margin-top:8px;font-size:13px;font-family:"JetBrains Mono",monospace;border-radius:999px;padding:2px 10px}
+.names-on .person .sp{display:inline-block}
+.person.k1 .sp{background:var(--c1s);color:var(--c1)}.person.k2 .sp{background:var(--c2s);color:var(--c2)}.person.k3 .sp{background:var(--c3s);color:var(--c3)}
+.person.on{transform:translateY(-5px)}
+.person.on.k1{border-color:var(--c1)}.person.on.k2{border-color:var(--c2)}.person.on.k3{border-color:var(--c3)}
+.bubble{position:absolute;bottom:calc(100% + 12px);left:50%;transform:translateX(-50%) scale(.6);opacity:0;background:var(--ink);color:var(--bg);font-size:14px;padding:7px 12px;border-radius:12px;white-space:nowrap;pointer-events:none;transition:opacity .2s,transform .2s;z-index:3}
+.bubble::after{content:"";position:absolute;top:100%;left:50%;margin-left:-6px;border:6px solid transparent;border-top-color:var(--ink)}
+.person.talk .bubble{opacity:1;transform:translateX(-50%) scale(1)}
+.person:first-child .bubble{left:0;transform:scale(.6);transform-origin:left bottom}
+.person:first-child.talk .bubble{transform:scale(1)}
+.person:first-child .bubble::after{left:32px}
+.person:last-child .bubble{left:auto;right:0;transform:scale(.6);transform-origin:right bottom}
+.person:last-child.talk .bubble{transform:scale(1)}
+.person:last-child .bubble::after{left:auto;right:30px}
+.token{position:absolute;top:-34px;font-size:28px;margin-left:-15px;transition:left .6s cubic-bezier(.5,0,.2,1);left:12.5%;z-index:2}
+.shop-controls{display:flex;justify-content:center;gap:8px;margin-top:22px;flex-wrap:wrap}
+.shop-note{margin:18px auto 0;max-width:34em;color:var(--muted);font-size:15.5px;min-height:26px}
+.chapters-map{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:22px;text-align:left}
+.chapters-map a{display:block;text-decoration:none;color:inherit;border-radius:14px;padding:14px 16px;border:1px solid var(--line)}
+.chapters-map a:hover{border-color:var(--ink)}
+.chapters-map .n{font-weight:700;font-size:15px}
+.chapters-map a:nth-child(1) .n{color:var(--c1)}.chapters-map a:nth-child(2) .n{color:var(--c2)}.chapters-map a:nth-child(3) .n{color:var(--c3)}
+.chapters-map .d{font-size:15px;color:var(--muted);display:block}
+
+/* chapter */
+section.ch{padding:12px 0 80px}
+.ch-head{display:flex;gap:16px;align-items:center;margin-bottom:6px}
+.ch-num{font-size:56px;font-weight:700;line-height:1;flex:none}
+.k1 .ch-num{color:var(--c1)}.k2 .ch-num{color:var(--c2)}.k3 .ch-num{color:var(--c3)}
+.ch-head h2{margin:0;font-size:clamp(22px,3.4vw,30px);line-height:1.3}
+.ch-head small{display:block;font-size:16px;font-weight:400;color:var(--muted)}
+.mission{font-size:17px;font-weight:700;margin:22px 0 12px}
+
+/* reveal words */
+.words{margin-top:22px;border:1px dashed var(--line);border-radius:16px;padding:16px 18px}
+.words p{margin:0 0 10px;font-size:15.5px;color:var(--muted)}
+.wlist{display:flex;flex-wrap:wrap;gap:10px}
+.word{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:8px 14px;text-align:left;font-size:15.5px}
+.word .easy{display:block;font-weight:700}
+.word .real{display:block;font-size:13px;color:var(--muted)}
+.word .real span{display:none}
+.word.open .real i{display:none}
+.word.open .real span{display:inline;font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:600}
+.k1 .word.open{border-color:var(--c1);background:var(--c1s)}.k1 .word.open .real span{color:var(--c1)}
+.k2 .word.open{border-color:var(--c2);background:var(--c2s)}.k2 .word.open .real span{color:var(--c2)}
+.k3 .word.open{border-color:var(--c3);background:var(--c3s)}.k3 .word.open .real span{color:var(--c3)}
+
+/* ch1 */
+.lab{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.rule{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px}
+.rule h3{margin:0 0 12px;font-size:16px}
+.power{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.switch{position:relative;width:56px;height:32px;border-radius:999px;border:none;background:var(--line);padding:0;flex:none;transition:background .2s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:left .2s}
+.switch[aria-checked="true"]{background:var(--ok)}
+.switch[aria-checked="true"]::after{left:27px}
+.menuboard{border-radius:12px;background:var(--soft);padding:14px;font-size:16px;line-height:2}
+.menuboard .addr{font-family:"JetBrains Mono",monospace;font-weight:600;background:var(--surface);border-radius:6px;padding:1px 8px}
+.menuboard input{border:2px dashed var(--c1);background:var(--surface);border-radius:8px;padding:2px 8px;width:9em;font-weight:700}
+.menuboard .lit{background:var(--warn);color:var(--warnInk);border-radius:8px;transition:background .3s}
+.browser{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--surface);display:flex;flex-direction:column;min-height:270px}
+.bar{display:flex;gap:6px;padding:10px;background:var(--soft);border-bottom:1px solid var(--line);align-items:center}
+.bar .lights{display:flex;gap:5px;margin-right:4px}
+.bar .lights i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.bar input{flex:1;min-width:0;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;font-size:14px}
+.bar button{border:none;background:var(--ink);color:var(--bg);border-radius:8px;padding:6px 14px;font-size:14px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;padding:10px 10px 0;align-items:center;font-size:13px;color:var(--muted)}
+.chip{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:3px 10px;font-size:13px}
+.page{flex:1;display:grid;place-items:center;padding:20px;text-align:center}
+.page .big{font-size:28px;font-weight:700}
+.page .sm{font-size:15px;color:var(--muted);margin-top:6px}
+.page.err .big{color:var(--no)}
+
+/* ch2 */
+.game{display:grid;grid-template-columns:270px 1fr;gap:18px;align-items:start}
+.ticket{background:var(--warn);color:var(--warnInk);border-radius:4px 4px 16px 16px;padding:18px}
+.ticket small{display:block;font-size:13px;opacity:.75}
+.ticket .say{font-size:20px;font-weight:700;margin:4px 0 8px}
+.ticket .addr{font-family:"JetBrains Mono",monospace;font-size:13px;opacity:.8;word-break:break-all;white-space:pre-wrap}
+.score{margin-top:10px;font-size:15px;color:var(--muted)}
+.windows{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.win{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:16px 10px;text-align:center;transition:border-color .2s,background .2s}
+.win .emo{font-size:30px;display:block}
+.win b{display:block;margin-top:4px}
+.win small{display:block;font-size:12.5px;color:var(--muted);font-family:"JetBrains Mono",monospace;margin-top:4px;word-break:break-all}
+.win:hover{border-color:var(--c2)}
+.win.right{border-color:var(--ok);background:var(--oks)}
+.win.wrong{border-color:var(--no);background:var(--nos);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+.feedback{margin-top:12px;min-height:60px;border-radius:14px;padding:14px 16px;background:var(--soft);font-size:16px}
+.reply{margin-top:10px;display:flex;gap:10px;align-items:flex-start}
+.reply .emo{font-size:26px;flex:none}
+.reply .card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:8px 12px;font-size:15px}
+
+/* ch3 */
+.db{display:grid;grid-template-columns:1fr 1.1fr;gap:18px;align-items:start}
+.ctrl{display:grid;gap:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row input{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 10px;font-size:15px;width:120px}
+.selinfo{font-size:15px;color:var(--muted)}
+.selinfo b{color:var(--ink)}
+.four{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.four button{border:1px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 4px;font-size:14.5px}
+.four button .emo{display:block;font-size:22px}
+.four button:disabled{opacity:.35;cursor:default}
+.diary{border-radius:14px;background:var(--soft);padding:12px 14px;font-size:15.5px;min-height:58px}
+details.sql{font-size:14px;margin-top:6px;color:var(--muted)}
+details.sql pre{margin:6px 0 0;background:#1E2631;color:#E4E9F0;border-radius:8px;padding:8px 12px;font-family:"JetBrains Mono",monospace;font-size:13px;white-space:pre-wrap;word-break:break-all}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;border:2px solid var(--line);border-radius:16px;padding:14px;background:var(--surface);min-height:200px;align-content:start}
+.shelf-title{font-size:14px;color:var(--muted);margin:0 0 8px}
+.item{border:2px solid var(--line);background:var(--bg);border-radius:12px;padding:10px;text-align:center;transition:border-color .2s,opacity .4s,transform .4s}
+.item .emo{font-size:26px;display:block}
+.item b{display:block;font-size:15px}
+.item span{font-size:14px;color:var(--muted)}
+.item small{display:block;font-size:12px;color:var(--muted)}
+.item.sel{border-color:var(--c3);background:var(--c3s)}
+.item.new{animation:pop .5s}
+.item.look{animation:look .8s}
+.item.gone{opacity:0;transform:scale(.6)}
+@keyframes pop{from{transform:scale(.5);opacity:0}}
+@keyframes look{50%{transform:scale(1.08)}}
+.empty{grid-column:1/-1;color:var(--muted);font-size:15px;text-align:center;padding:30px 0}
+
+/* final */
+.quiz{display:grid;gap:10px;margin-top:20px}
+.q{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px}
+.q .opts{display:flex;gap:6px;flex-wrap:wrap}
+.q .opts button{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 12px;font-size:15px}
+.q .opts button.right{background:var(--oks);border-color:var(--ok);color:var(--ok);font-weight:700}
+.q .opts button.wrong{background:var(--nos);border-color:var(--no);animation:shake .35s}
+.q.done{border-color:var(--ok)}
+.qscore{margin-top:16px;font-weight:700;font-size:18px}
+
+footer{border-top:1px solid var(--line);padding:24px 0;color:var(--muted);font-size:14px}
+
+@media (max-width:860px){
+  .lab,.db,.game{grid-template-columns:1fr}
+  .chapters-map{grid-template-columns:1fr}
+  .q{grid-template-columns:1fr}
+}
+@media (max-width:480px){
+  .windows{grid-template-columns:1fr}
+  .four{grid-template-columns:repeat(2,1fr)}
+  .ch-num{font-size:44px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .token,.person,.bubble,.item{transition:none}
+  .win.wrong,.q .opts button.wrong,.item.new,.item.look{animation:none}
+}
+
+.dbbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;border-radius:14px;background:var(--soft)}
+.dbbar .lbl{font-size:15px}
+.restart-msg{margin-top:8px;font-size:15px;min-height:24px}
+.def{margin:20px auto 0;max-width:34em;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 18px;font-size:16px}
+.def b{color:var(--c1)}
+
+.defs{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:24px auto 0;max-width:820px;text-align:left}
+.defs .def{margin:0;max-width:none}
+.defs .def b{display:block;font-size:18px;margin-bottom:4px}
+.defs .def small{display:block;font-size:14px;color:var(--muted);margin-top:6px}
+.lead{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px 20px;font-size:16.5px;margin:18px 0 0}
+.lead b.t{font-size:18px}
+.k2 .lead b.t{color:var(--c2)}.k3 .lead b.t{color:var(--c3)}.k1 .lead b.t{color:var(--c1)}
+.concepts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:12px 0 4px}
+.concept{background:var(--surface);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:12px;padding:14px 16px}
+.k1 .concept{border-left-color:var(--c1)}.k2 .concept{border-left-color:var(--c2)}.k3 .concept{border-left-color:var(--c3)}
+.concept h3{margin:0 0 4px;font-size:17px}
+.concept h3 small{font-weight:400;font-size:13px;color:var(--muted);margin-left:6px}
+.concept p{margin:0;font-size:15.5px}
+.concept .ex{margin-top:8px;font-size:14px;color:var(--muted)}
+.concept .ex code{font-family:"JetBrains Mono",monospace;background:var(--soft);border-radius:4px;padding:1px 5px;color:var(--ink);font-size:13px}
+.mvc{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.mvc span{font-size:13px;background:var(--soft);border-radius:8px;padding:3px 8px}
+.mvc b{color:var(--c2)}
+.binding{margin-top:8px;font-size:15px;background:var(--surface);border:1px dashed var(--c2);border-radius:10px;padding:8px 12px}
+.binding code{font-family:"JetBrains Mono",monospace;font-size:13.5px}
+.viewtoggle{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:3px 12px;font-size:13px;margin-left:8px}
+.dbtable{grid-column:1/-1;width:100%;border-collapse:collapse;font-size:15px}
+.dbtable th,.dbtable td{border:1px solid var(--line);padding:8px 12px;text-align:left}
+.dbtable th{background:var(--c3s);color:var(--c3);font-family:"JetBrains Mono",monospace;font-size:13px}
+.dbtable tr{cursor:pointer}
+.dbtable tr.sel td{background:var(--c3s)}
+.dbtable tr.new td,.dbtable tr.look td{animation:flash 1s}
+@keyframes flash{from{background:var(--warn)}}
+@media (max-width:760px){.defs,.concepts{grid-template-columns:1fr}}
+
+.step{margin-top:26px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:20px}
+.step-h{display:flex;align-items:center;gap:10px}
+.step-h .sn{width:32px;height:32px;border-radius:50%;background:var(--c3);color:var(--bg);display:grid;place-items:center;font-weight:700;flex:none}
+.step-h h3{margin:0;font-size:20px}
+.sd{margin:6px 0 14px;color:var(--muted);font-size:15.5px}
+.sd b{color:var(--ink)}
+.try{font-weight:700;font-size:15px;margin:0 0 10px}
+.msg{margin-top:12px;border-radius:12px;padding:12px 14px;background:var(--soft);font-size:15.5px;min-height:48px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.zone{border:2px solid var(--line);border-radius:14px;padding:12px;min-height:150px;transition:opacity .3s}
+.zone h4{margin:0 0 8px;font-size:15px;display:flex;justify-content:space-between;align-items:center;gap:6px}
+.zone .list{display:flex;flex-wrap:wrap;gap:6px}
+.pill{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:5px 10px;font-size:14px}
+.pill.new{animation:pop .5s}
+@keyframes pop{from{transform:scale(.5);opacity:0}}
+.zone.off{opacity:.25}
+.zone.mem{border-style:dashed}
+.zone.dbz{border-color:var(--c3)}
+.zone .none{font-size:14px;color:var(--muted)}
+.rel{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;align-items:start}
+.rtable{width:100%;border-collapse:collapse;font-size:15px}
+.rtable caption{text-align:left;font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:600;color:var(--c3);padding-bottom:4px}
+.rtable th,.rtable td{border:1px solid var(--line);padding:7px 10px;text-align:left;transition:background .25s}
+.rtable th{background:var(--soft);font-family:"JetBrains Mono",monospace;font-size:13px}
+.rtable tbody tr{cursor:pointer}
+.rtable .hl{background:var(--c3s)}
+.rtable .key{background:var(--warn);color:var(--warnInk);font-weight:700}
+.chipbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chipbar button{border:1px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 12px;font-size:14px}
+.chipbar button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.repo{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.repo .who{font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:600;margin-right:2px}
+.mth{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 10px;font-family:"JetBrains Mono",monospace;font-size:14px;display:flex;align-items:center;gap:6px}
+.mth i{font-style:normal;font-family:"IBM Plex Sans KR",sans-serif;font-size:12px;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;background:var(--c3);color:var(--bg);font-weight:700}
+.mth:disabled{opacity:.35;cursor:default}
+.mth.on{border-color:var(--c3);background:var(--c3s)}
+.crud{display:flex;gap:6px;margin:12px 0 0;flex-wrap:wrap}
+.crud span{font-size:13px;border:1px solid var(--line);border-radius:8px;padding:3px 9px;transition:background .25s}
+.crud span.on{background:var(--c3);color:var(--bg);border-color:var(--c3)}
+.pipe{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch;margin-top:14px}
+.pbox{border-radius:12px;padding:10px 12px;background:#1E2631;color:#E4E9F0;font-family:"JetBrains Mono",monospace;font-size:13px;white-space:pre-wrap;word-break:break-all;min-height:96px}
+.pbox::before{display:block;font-family:"IBM Plex Sans KR",sans-serif;font-size:12px;color:#8794A6;margin-bottom:4px}
+#pCode::before{content:"📝 내가 쓰는 코드"}
+#pSql::before{content:"💾 DB에 실제로 가는 명령 (SQL)"}
+.jpa{display:grid;place-items:center;text-align:center;font-size:13px;font-weight:700;color:var(--c3);min-width:76px;transition:opacity .3s}
+.jpa .big{font-size:26px;display:block}
+.jpa.off{opacity:.35;color:var(--muted)}
+.jpa.go .big{animation:spin .6s}
+@keyframes spin{to{transform:rotate(360deg)}}
+.pc{display:grid;grid-template-columns:1fr 1.2fr 1fr;gap:10px}
+.pc .zone{min-height:170px}
+.pc .zone.ctx{border-color:var(--c3);border-style:dashed}
+.ctxcard{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;background:var(--bg)}
+.ctxcard div{margin:2px 0}
+.ctxcard .lbl{font-size:12px;color:var(--muted)}
+.ctxcard .diff{background:var(--warn);color:var(--warnInk);border-radius:4px;padding:0 4px}
+.acts{display:grid;gap:8px}
+.acts button{text-align:left;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 10px;font-size:14px}
+.acts button:disabled{opacity:.35;cursor:default}
+.acts input{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 8px;font-size:14px;width:100%}
+.dbrow{border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:14px;background:var(--bg)}
+.dbrow.flash{animation:flash 1s}
+.sqllog{margin-top:10px;font-family:"JetBrains Mono",monospace;font-size:13px;background:#1E2631;color:#E4E9F0;border-radius:10px;padding:10px 12px;min-height:44px;white-space:pre-wrap}
+.sqllog::before{content:"DB에 보낸 SQL 기록";display:block;font-family:"IBM Plex Sans KR",sans-serif;font-size:12px;color:#8794A6;margin-bottom:2px}
+@media (max-width:760px){.two,.rel,.pc{grid-template-columns:1fr}.pipe{grid-template-columns:1fr}.jpa{padding:4px 0}}
+@media (prefers-reduced-motion:reduce){.pill.new,.jpa.go .big,.dbrow.flash{animation:none}}
+
+.k1 .step-h .sn{background:var(--c1)}.k2 .step-h .sn{background:var(--c2)}
+.tasks{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.task{border:2px solid var(--no);background:var(--nos);border-radius:12px;padding:10px;font-size:14.5px;transition:background .35s,border-color .35s,transform .35s}
+.task small{display:block;font-size:12px;margin-top:2px;color:var(--no);font-weight:700}
+.task.sp{border-color:var(--ok);background:var(--oks)}
+.task.sp small{color:var(--ok)}
+.task.mine{border-color:var(--c1);background:var(--c1s)}
+.task.mine small{color:var(--c1)}
+.counter{font-size:22px;font-weight:700;margin:12px 0 0}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:12px}
+.seg button{border:none;background:var(--surface);padding:8px 14px;font-size:14.5px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.boot{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.bsteps{display:grid;gap:6px}
+.bstep{display:flex;gap:8px;align-items:center;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 10px;font-size:14.5px;text-align:left;width:100%}
+.bstep .ck{width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;flex:none;font-size:13px}
+.bstep.done{background:var(--oks);border-color:var(--ok)}
+.bstep.done .ck{background:var(--ok);border-color:var(--ok);color:#fff}
+.bstep .auto{margin-left:auto;font-size:12px;color:var(--ok);font-weight:700}
+.bstep:disabled{cursor:default}
+.console{background:#0E131A;color:#B8F2C9;font-family:"JetBrains Mono",monospace;font-size:13px;border-radius:12px;padding:12px;min-height:180px;white-space:pre-wrap;word-break:break-all}
+.mvcwrap{display:grid;gap:10px}
+.mvcbox{border:2px solid var(--line);border-radius:12px;padding:10px 12px;transition:background .3s,border-color .3s}
+.mvcbox h4{margin:0 0 6px;font-size:15px}
+.mvcbox.glow{border-color:var(--c2);background:var(--c2s)}
+.mvcbox.burn{border-color:var(--no);background:var(--nos)}
+.mvcline{font-size:14.5px;padding:3px 0;display:flex;gap:8px;align-items:center}
+.mvcline i{font-style:normal;font-size:11px;font-weight:700;width:20px;height:20px;border-radius:5px;display:grid;place-items:center;color:#fff;flex:none}
+.mvcline i.M{background:#2563C9}.mvcline i.V{background:#9B4FD1}.mvcline i.C{background:#B8700A}
+.split3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ds{display:grid;grid-template-columns:auto 1fr auto 1fr auto;gap:10px;align-items:center}
+.ds .col{display:grid;gap:8px}
+.ds .arrow{font-size:20px;color:var(--muted)}
+.dsbox{border:2px solid var(--c2);border-radius:14px;padding:14px 10px;text-align:center;font-weight:700;transition:background .3s,transform .3s;min-width:150px}
+.dsbox small{display:block;font-weight:400;font-size:13px;color:var(--muted);min-height:20px;font-family:"JetBrains Mono",monospace}
+.dsbox.on{background:var(--c2s);transform:scale(1.04)}
+.ctl{border:2px solid var(--line);border-radius:12px;padding:8px 12px;font-family:"JetBrains Mono",monospace;font-size:13.5px;transition:background .3s,border-color .3s}
+.ctl small{display:block;font-family:"IBM Plex Sans KR",sans-serif;color:var(--muted);font-size:12px}
+.ctl.on{border-color:var(--ok);background:var(--oks)}
+.ctl.miss{border-color:var(--no);background:var(--nos)}
+.rq{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 10px;font-family:"JetBrains Mono",monospace;font-size:13px;text-align:left}
+.rq.on{background:var(--warn);color:var(--warnInk)}
+.jsonlab{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+.form{display:grid;gap:8px}
+.form label{display:grid;grid-template-columns:70px 1fr;align-items:center;gap:8px;font-size:14.5px}
+.form input[type=text],.form input[type=number]{border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:6px 10px;font-size:15px;min-width:0}
+.jsonout{background:#1E2631;color:#E4E9F0;font-family:"JetBrains Mono",monospace;font-size:14px;border-radius:12px;padding:14px;white-space:pre;overflow-x:auto;min-height:150px}
+.jsonout .k{color:#FFD27A}.jsonout .v{color:#9FE3B8}
+.jsonout .hl{background:rgba(255,210,122,.25);border-radius:4px}
+.bind{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:stretch}
+.bind .side{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--bg)}
+.bind .side h4{margin:0 0 8px;font-size:14px;color:var(--muted);font-weight:500}
+.bind .reqline{font-family:"JetBrains Mono",monospace;font-size:14px;line-height:2;word-break:break-all}
+.bind .reqline input{border:2px dashed var(--c2);background:var(--surface);border-radius:6px;padding:1px 6px;font-family:inherit;font-size:14px;width:7.5em}
+.bind .java{font-family:"JetBrains Mono",monospace;font-size:13px;white-space:pre-wrap;word-break:break-all;background:#1E2631;color:#E4E9F0;border-radius:10px;padding:10px}
+.bind .val{margin-top:8px;font-family:"JetBrains Mono",monospace;font-size:15px;font-weight:700;border-radius:8px;padding:6px 10px;background:var(--c2s);color:var(--c2);min-height:36px}
+.bind .val.fly{animation:fly .6s}
+@keyframes fly{from{transform:translateX(-40px);opacity:0}}
+.bind .mid{display:grid;place-items:center;font-size:26px}
+@media (max-width:760px){.boot,.jsonlab,.split3,.bind{grid-template-columns:1fr}.ds{grid-template-columns:1fr}.ds .arrow{transform:rotate(90deg);justify-self:center}}
+@media (prefers-reduced-motion:reduce){.task,.bind .val.fly{transition:none;animation:none}}
+</style>
+</head>
+<body>
+
+<nav class="top" aria-label="이동">
+  <div class="wrap">
+    <a class="brand" href="#top">Spring 입문</a>
+    <a href="#ch1"><span class="dot d1"></span>1. Spring Boot</a>
+    <a href="#ch2"><span class="dot d2"></span>2. Spring MVC</a>
+    <a href="#ch3"><span class="dot d3"></span>3. Spring Data JPA</a>
+    
+  </div>
+</nav>
+
+<main id="top">
+  <header class="hero wrap">
+    <h1>Spring은 서버를 만드는 도구예요</h1>
+    <p>앱에서 버튼을 누르면 요청이 서버로 가고, 서버는 일을 처리한 뒤 결과를 돌려줍니다. 이번 주에는 이 서버를 직접 만들어 봐요.</p>
+    <div class="def"><b>서버</b>란? 요청을 기다렸다가, 요청이 오면 처리해서 결과를 돌려주는 프로그램이에요.</div>
+  </header>
+
+  <section class="wrap shop" aria-label="요청이 처리되는 흐름">
+    <div class="box" id="shopBox">
+      <div class="lane-scroll">
+        <div class="lane" id="lane"><div class="token" id="token" aria-hidden="true">📨</div></div>
+      </div>
+      <div class="shop-controls">
+        <button class="btn" id="order">▶ 요청 보내 보기</button>
+        <button class="btn ghost" id="names" aria-pressed="false">스프링에서 부르는 이름 보기</button>
+      </div>
+      <p class="shop-note" id="shopNote" aria-live="polite">버튼을 누르면 “1번 게시글 보기” 요청이 어떻게 처리되는지 보여 줘요.</p>
+      <div class="chapters-map">
+        <a href="#ch1"><span class="n">챕터 1 · 서버 실행하기</span><span class="d">서버를 켜고 첫 요청에 응답해요</span></a>
+        <a href="#ch2"><span class="n">챕터 2 · 요청 처리하기</span><span class="d">요청 종류에 맞는 코드를 실행해요</span></a>
+        <a href="#ch3"><span class="n">챕터 3 · 데이터 저장하기</span><span class="d">서버를 꺼도 데이터가 남게 해요</span></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 챕터 1 -->
+  <section class="ch k1 wrap" id="ch1">
+    <div class="ch-head">
+      <div class="ch-num">1</div>
+      <h2>Spring Boot 시작하기<small>Spring이 뭔지 알고, 서버를 켜서 첫 요청에 응답해요</small></h2>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="sn">1</span><h3>Spring</h3></div>
+      <p class="sd">자바로 서버를 만들 때 <b>늘 필요한 기능을 미리 만들어 둔 도구 모음</b>이에요. 이런 도구 모음을 ‘프레임워크’라고 불러요.</p>
+      <p class="try">👉 스위치를 켜서, Spring을 쓰면 내가 만들 것이 얼마나 줄어드는지 보세요</p>
+      <div class="power"><button class="switch" id="spSw" role="switch" aria-checked="false" aria-label="Spring 사용"></button><span id="spTxt"><b>Spring 없이</b> 서버를 처음부터 만들기</span></div>
+      <div class="tasks" id="tasks"></div>
+      <div class="counter" id="spCount" aria-live="polite"></div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="sn">2</span><h3>Spring Boot</h3></div>
+      <p class="sd">Spring을 <b>바로 쓸 수 있게 준비를 대신 해 주는 도구</b>예요. 복잡한 설정과 서버 프로그램 설치를 알아서 해 줘서, 실행 버튼 한 번이면 서버가 켜져요.</p>
+      <p class="try">👉 두 방식으로 서버를 켜 보세요. ‘Spring만’은 단계를 하나씩 직접 눌러야 해요</p>
+      <div class="seg" role="group" aria-label="방식 고르기"><button data-mode="spring" aria-pressed="true">Spring만 쓸 때</button><button data-mode="boot" aria-pressed="false">Spring Boot로</button></div>
+      <div class="boot">
+        <div><div class="bsteps" id="bsteps"></div><div style="margin-top:10px"><button class="btn" id="bootRun" hidden>▶ main 실행</button></div></div>
+        <div class="console" id="console" aria-live="polite">$ </div>
+      </div>
+      <div class="msg" id="bootMsg" aria-live="polite">위 단계를 1번부터 차례로 눌러 보세요.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="sn">3</span><h3>내 서버에 요청 보내기</h3></div>
+      <p class="sd">서버가 켜지면 정해 둔 주소로 오는 요청을 기다려요. 요청이 오면 내가 정한 대로 응답해요.</p>
+
+      <p class="try">👉 서버를 켜고, 오른쪽 주소창에서 ‘이동’을 눌러 보세요</p>
+    <div class="lab">
+      <div class="rule">
+        <div class="power">
+          <button class="switch" id="power" role="switch" aria-checked="false" aria-label="서버 실행"></button>
+          <span id="powerTxt"><b>서버 꺼짐</b></span>
+        </div>
+        <h3>📋 내가 서버에 정해 둔 규칙</h3>
+        <div class="menuboard">
+          <div id="ruleLine"><span class="addr">/hello</span> 주소로 요청이 오면<br>
+          👉 “<input id="msg" value="안녕하세요!" aria-label="응답할 글자" maxlength="20">” 라고 응답하기</div>
+        </div>
+        <p style="font-size:14px;color:var(--muted);margin:10px 0 0">점선 칸의 글자를 바꾸고 다시 요청해 보세요. 수업에서는 이 규칙을 자바 코드로 씁니다.</p>
+      </div>
+      <div class="browser">
+        <div class="bar">
+          <span class="lights" aria-hidden="true"><i></i><i></i><i></i></span>
+          <input id="addr" class="mono" value="localhost:8080/hello" aria-label="주소창">
+          <button id="go">이동</button>
+        </div>
+        <div class="chips">다른 주소: 
+          <button class="chip" data-a="localhost:8080/hello">/hello</button>
+          <button class="chip" data-a="localhost:8080/bye">/bye</button>
+        </div>
+        <div class="page" id="page" aria-live="polite"><div><div class="big">💻</div><div class="sm">사용자의 브라우저 화면이에요</div></div></div>
+      </div>
+    </div>
+
+    </div>
+
+    <p class="mission">📌 챕터 1의 핵심 단어</p>
+    <div class="concepts">
+      <div class="concept"><h3>요청<small>Request</small></h3><p>사용자가 서버에 “이거 해 주세요” 하고 보내는 것. 주소와 함께 보내요.</p><div class="ex">예: 주소창에 <code>localhost:8080/hello</code> 입력</div></div>
+      <div class="concept"><h3>응답<small>Response</small></h3><p>서버가 요청을 처리하고 돌려주는 결과. 위 실습에서 화면에 뜬 글자가 응답이에요.</p><div class="ex">없는 주소면 <code>404</code> 같은 실패 응답이 와요</div></div>
+      <div class="concept"><h3>Spring Boot로 서버 실행<small>위 실습의 스위치</small></h3><p>Spring Boot 프로젝트를 실행하면 서버가 켜지고 요청을 기다려요. <code>localhost:8080</code>은 ‘내 컴퓨터에서 켠 서버’라는 뜻이에요.</p></div>
+      <div class="concept"><h3>규칙을 코드로 쓰기<small>어노테이션</small></h3><p>“이 주소로 오면 이렇게 응답” 같은 규칙을 자바 코드에 <code>@</code>로 시작하는 표시를 붙여서 스프링에게 알려 줘요.</p><div class="ex">예: <code>@GetMapping("/hello")</code></div></div>
+    </div>
+  </section>
+
+  <!-- 챕터 2 -->
+  <section class="ch k2 wrap" id="ch2">
+    <div class="ch-head">
+      <div class="ch-num">2</div>
+      <h2>요청 처리하기<small>요청 종류마다 다른 코드가 실행되게 나누고, 결과를 응답해요</small></h2>
+    </div>
+
+    <div class="lead"><b class="t">Spring MVC란?</b> Spring에서 <b>웹 요청을 받고 응답을 만드는 부분</b>이에요. 요청이 들어오면 알맞은 코드로 보내 주고, 그 코드가 돌려준 결과를 응답으로 바꿔 사용자에게 보내 줍니다.</div>
+
+    <div class="step">
+      <div class="step-h"><span class="sn">1</span><h3>MVC 패턴</h3></div>
+      <p class="sd">코드를 <b>Model(데이터), View(보여 주는 화면), Controller(요청 받고 연결)</b> 세 역할로 나눠 쓰는 방법이에요.</p>
+      <p class="try">👉 두 방식에서 각각 ‘화면 디자인 바꾸기’를 눌러, 고쳐야 할 범위를 비교해 보세요</p>
+      <div class="seg" role="group" aria-label="코드 구조"><button data-mvc="mix" aria-pressed="true">한 곳에 섞어 쓰기</button><button data-mvc="split" aria-pressed="false">역할 나눠 쓰기 (MVC)</button></div>
+      <div id="mvcArea"></div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn ghost" data-change="V">🎨 화면 디자인 바꾸기</button>
+        <button class="btn ghost" data-change="M">📦 글에 ‘작성일’ 항목 추가하기</button>
+        <button class="btn ghost" data-change="C">🔗 새 주소 하나 추가하기</button>
+      </div>
+      <div class="msg" id="mvcMsg" aria-live="polite">버튼을 눌러 보세요.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="sn">2</span><h3>DispatcherServlet</h3></div>
+      <p class="sd">모든 요청이 <b>가장 먼저 도착하는 입구</b>예요. 주소를 보고 담당 Controller를 찾아 넘겨 줘요. 스프링이 미리 만들어 둬서 우리가 만들 필요는 없어요.</p>
+      <p class="try">👉 왼쪽 요청을 하나씩 보내 보세요</p>
+      <div class="ds">
+        <div class="col" id="dsReqs">
+          <button class="rq" data-path="/posts/1" data-to="post">GET /posts/1</button>
+          <button class="rq" data-path="/members/2" data-to="member">GET /members/2</button>
+          <button class="rq" data-path="/comments" data-to="comment">POST /comments</button>
+          <button class="rq" data-path="/hello2" data-to="">GET /hello2</button>
+        </div>
+        <div class="arrow" aria-hidden="true">➜</div>
+        <div class="dsbox" id="dsBox">🚪 DispatcherServlet<small id="dsSay">요청 기다리는 중</small></div>
+        <div class="arrow" aria-hidden="true">➜</div>
+        <div class="col">
+          <div class="ctl" data-c="post"><small>/posts 담당</small>PostController</div>
+          <div class="ctl" data-c="member"><small>/members 담당</small>MemberController</div>
+          <div class="ctl" data-c="comment"><small>/comments 담당</small>CommentController</div>
+        </div>
+      </div>
+      <div class="msg" id="dsMsg" aria-live="polite">어떤 요청이든 Controller로 바로 가지 않고, 꼭 DispatcherServlet을 먼저 거쳐요.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="sn">3</span><h3>직접 DispatcherServlet이 되어 보기</h3></div>
+      <p class="sd">이번엔 같은 PostController 안에서도 요청에 따라 어떤 기능으로 보낼지 골라야 해요.</p>
+      <p class="try">👉 들어온 요청을 보고 처리할 기능을 고르세요</p>
+    <div class="game">
+      <div>
+        <div class="ticket" aria-live="polite"><small>💻 PostController로 온 요청</small><div class="say" id="say"></div><div class="addr" id="taddr"></div></div>
+        <div class="score" id="score"></div>
+      </div>
+      <div>
+        <div class="windows" id="windows">
+          <button class="win" data-m="one"><span class="emo">🔎</span><b>글 하나 조회</b></button>
+          <button class="win" data-m="search"><span class="emo">🗂️</span><b>글 검색</b></button>
+          <button class="win" data-m="add"><span class="emo">✍️</span><b>새 글 작성</b></button>
+        </div>
+        <div class="feedback" id="feedback" aria-live="polite">요청 주소를 잘 읽고 골라 보세요.</div>
+        <div style="margin-top:10px"><button class="btn ghost" id="nextOrder" hidden>다음 요청</button></div>
+      </div>
+    </div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="sn">4</span><h3>JSON</h3></div>
+      <p class="sd">서버와 데이터를 주고받을 때 쓰는 <b>글자 형식</b>이에요. <b>"이름": 값</b>으로 짝지어 적어서 어떤 값이 무엇인지 바로 알 수 있어요.</p>
+      <p class="try">👉 왼쪽 값을 바꿔 보고, ‘이름 빼 보기’도 눌러 보세요</p>
+      <div class="jsonlab">
+        <div class="form">
+          <label>제목<input type="text" id="jTitle" data-k="title" value="첫 글"></label>
+          <label>작성자<input type="text" id="jWriter" data-k="writer" value="김스파"></label>
+          <label>조회수<input type="number" id="jViews" data-k="views" value="10"></label>
+          <label>공개<input type="checkbox" id="jPub" data-k="published" checked style="width:20px;height:20px"></label>
+          <div class="power" style="margin:6px 0 0"><button class="switch" id="jNoKey" role="switch" aria-checked="false" aria-label="이름 빼 보기"></button><span>이름 빼 보기</span></div>
+        </div>
+        <div><div class="jsonout" id="jOut"></div></div>
+      </div>
+      <div class="msg" id="jMsg" aria-live="polite">Controller가 자바 객체를 돌려주면, 스프링이 이런 JSON으로 바꿔서 응답해 줘요.</div>
+    </div>
+
+    <div class="step">
+      <div class="step-h"><span class="sn">5</span><h3>데이터 바인딩</h3></div>
+      <p class="sd">요청에 담긴 값을 <b>자바 변수에 자동으로 넣어 주는 것</b>이에요. 요청을 일일이 뜯어볼 필요가 없어요.</p>
+      <p class="try">👉 점선 칸의 값을 바꾸고 ‘요청 보내기’를 눌러 보세요. ‘바인딩 없이’ 스위치도 켜 보세요</p>
+      <div class="seg" role="group" aria-label="값이 오는 곳"><button data-b="path" aria-pressed="true">주소 안</button><button data-b="query" aria-pressed="false">물음표 뒤</button><button data-b="body" aria-pressed="false">본문(JSON)</button></div>
+      <div class="bind">
+        <div class="side"><h4>💻 들어온 요청</h4><div class="reqline" id="bReq"></div><div style="margin-top:10px"><button class="btn" id="bSend">요청 보내기</button></div></div>
+        <div class="mid" aria-hidden="true">➜</div>
+        <div class="side"><h4>☕ 자바 코드</h4><div class="java" id="bJava"></div><div class="val" id="bVal" aria-live="polite"></div></div>
+      </div>
+      <div class="power" style="margin:12px 0 0"><button class="switch" id="bNo" role="switch" aria-checked="false" aria-label="바인딩 없이"></button><span>바인딩 없이 직접 꺼내면?</span></div>
+      <div class="msg" id="bMsg" aria-live="polite">값이 어디에 실려 오든, 스프링이 꺼내서 변수에 넣어 줘요.</div>
+    </div>
+
+  </section>
+
+  <!-- 챕터 3 -->
+  <section class="ch k3 wrap" id="ch3">
+    <div class="ch-head">
+      <div class="ch-num">3</div>
+      <h2>데이터 저장하기<small>Spring Data JPA · 서버를 꺼도 데이터가 남도록 저장하고 꺼내요</small></h2>
+    </div>
+
+    <!-- ① DB -->
+    <div class="step">
+      <div class="step-h"><span class="sn">1</span><h3>데이터베이스(DB)</h3></div>
+      <p class="sd">데이터를 오래 보관하는 <b>전용 프로그램</b>이에요. 서버와 따로 있어서, 서버가 꺼져도 데이터가 남아요.</p>
+      <p class="try">👉 양쪽에 글을 저장한 다음 ‘서버 껐다 켜기’를 눌러 보세요</p>
+      <div class="row" style="margin-bottom:12px">
+        <input id="aTitle" value="오늘 배운 것" aria-label="글 제목" style="width:170px">
+        <button class="btn ghost" id="aMem">⚙️ 서버 메모리에 저장</button>
+        <button class="btn ghost" id="aDb">💾 DB에 저장</button>
+        <button class="btn" id="aRestart">🔄 서버 껐다 켜기</button>
+      </div>
+      <div class="two">
+        <div class="zone mem" id="zMem"><h4>⚙️ 서버 메모리 <small style="font-weight:400;color:var(--muted)">서버 안</small></h4><div class="list" id="lMem"></div></div>
+        <div class="zone dbz"><h4>💾 데이터베이스 <small style="font-weight:400;color:var(--muted)">서버 밖</small></h4><div class="list" id="lDb"></div></div>
+      </div>
+      <div class="msg" id="aMsg" aria-live="polite">아직 아무것도 저장하지 않았어요.</div>
+    </div>
+
+    <!-- ② 관계형 DB -->
+    <div class="step">
+      <div class="step-h"><span class="sn">2</span><h3>관계형 데이터베이스</h3></div>
+      <p class="sd">데이터를 엑셀처럼 <b>표(테이블)</b>로 저장하고, <b>표끼리 연결(관계)</b>할 수 있는 DB예요. MySQL이 대표적이에요.</p>
+      <p class="try">👉 버튼으로 줄과 칸을 확인하고, 표의 줄을 눌러 연결된 데이터를 찾아보세요</p>
+      <div class="chipbar" role="group" aria-label="표 구조 보기">
+        <button data-show="row" aria-pressed="false">줄(행) = 데이터 하나</button>
+        <button data-show="col" aria-pressed="false">칸(열) = 항목</button>
+      </div>
+      <div class="rel">
+        <table class="rtable" id="tMember"><caption>member 표</caption>
+          <thead><tr><th data-c="mid">id</th><th data-c="mname">name</th></tr></thead>
+          <tbody>
+            <tr data-m="1"><td data-c="mid">1</td><td data-c="mname">김스파</td></tr>
+            <tr data-m="2"><td data-c="mid">2</td><td data-c="mname">이자바</td></tr>
+          </tbody></table>
+        <table class="rtable" id="tPost"><caption>post 표</caption>
+          <thead><tr><th data-c="pid">id</th><th data-c="ptitle">title</th><th data-c="pmid">member_id</th></tr></thead>
+          <tbody>
+            <tr data-p="1" data-m="1"><td data-c="pid">1</td><td data-c="ptitle">첫 글</td><td data-c="pmid">1</td></tr>
+            <tr data-p="2" data-m="2"><td data-c="pid">2</td><td data-c="ptitle">스프링 시작</td><td data-c="pmid">2</td></tr>
+            <tr data-p="3" data-m="1"><td data-c="pid">3</td><td data-c="ptitle">JPA 정리</td><td data-c="pmid">1</td></tr>
+          </tbody></table>
+      </div>
+      <div class="msg" id="rMsg" aria-live="polite">post 표의 줄이나 member 표의 줄을 눌러 보세요.</div>
+    </div>
+
+    <!-- ③ Repository · JPA · CRUD -->
+    <div class="step">
+      <div class="step-h"><span class="sn">3</span><h3>Repository · JPA · CRUD</h3></div>
+      <p class="sd"><b>Repository</b>는 DB를 담당하는 코드예요. 저장·조회·삭제 기능이 이미 들어 있어요. <b>JPA</b>는 우리가 쓴 자바 코드를 DB가 알아듣는 명령(SQL)으로 <b>번역</b>해 줘요. 이 네 가지 기본 동작을 <b>CRUD</b>라고 불러요.</p>
+      <p class="try">👉 postRepository의 기능을 눌러 보세요. 그다음 ‘JPA 없이’ 스위치를 켜고 다시 눌러 보세요</p>
+      <div class="row" style="margin-bottom:10px">
+        <input id="cTitle" value="새 글" aria-label="저장할 제목" style="width:150px">
+        <span style="font-size:14px;color:var(--muted)">조회·수정·삭제는 아래 표에서 줄을 먼저 고르세요</span>
+      </div>
+      <div class="repo">
+        <span class="who">postRepository.</span>
+        <button class="mth" data-op="C"><i>C</i>save()</button>
+        <button class="mth" data-op="R" disabled><i>R</i>findById()</button>
+        <button class="mth" data-op="U" disabled><i>U</i>제목 수정</button>
+        <button class="mth" data-op="D" disabled><i>D</i>delete()</button>
+      </div>
+      <div class="crud" aria-hidden="true"><span data-l="C">C · Create 저장</span><span data-l="R">R · Read 조회</span><span data-l="U">U · Update 수정</span><span data-l="D">D · Delete 삭제</span></div>
+      <div class="power" style="margin:14px 0 0">
+        <button class="switch" id="noJpa" role="switch" aria-checked="false" aria-label="JPA 없이 직접 쓰기"></button>
+        <span id="noJpaTxt">JPA 없이 직접 쓰면?</span>
+      </div>
+      <div class="pipe">
+        <div class="pbox" id="pCode">기능을 눌러 보세요</div>
+        <div class="jpa" id="jpaBox"><span class="big">🔁</span>JPA가<br>번역</div>
+        <div class="pbox" id="pSql"></div>
+      </div>
+      <div style="margin-top:12px;overflow-x:auto"><table class="dbtable" id="cTable"></table></div>
+      <div class="msg" id="cMsg" aria-live="polite">save()로 새 글을 저장해 보세요.</div>
+    </div>
+
+    <!-- ④ 영속성 컨텍스트 -->
+    <div class="step">
+      <div class="step-h"><span class="sn">4</span><h3>영속성 컨텍스트</h3></div>
+      <p class="sd">JPA가 DB에서 꺼낸 데이터를 <b>잠시 기억해 두는 공간</b>이에요. 처음 모습을 기억해 두었다가, 바뀐 게 있으면 작업이 끝날 때 알아서 DB에 반영해요.</p>
+      <p class="try">👉 ① → ② → ③ 순서로 눌러 보세요. ①을 두 번 누르면 어떻게 될까요?</p>
+      <div class="pc">
+        <div class="zone"><h4>💻 내 코드</h4>
+          <div class="acts">
+            <button id="k1">① 1번 글 꺼내기<br><span class="mono" style="font-size:12px">findById(1)</span></button>
+            <input id="kTitle" value="첫 글 (수정)" aria-label="바꿀 제목">
+            <button id="k2" disabled>② 제목 바꾸기<br><span class="mono" style="font-size:12px">save()는 안 불러요</span></button>
+            <button id="k3" disabled>③ 작업 끝내기</button>
+          </div>
+        </div>
+        <div class="zone ctx"><h4>🧠 영속성 컨텍스트 <small style="font-weight:400;color:var(--muted)">JPA의 기억 공간</small></h4><div id="ctx"><span class="none">비어 있어요</span></div></div>
+        <div class="zone dbz"><h4>💾 DB</h4><div class="dbrow" id="kDb"></div></div>
+      </div>
+      <div class="sqllog" id="kLog">아직 없음</div>
+      <div class="msg" id="kMsg" aria-live="polite">①을 눌러 1번 글을 꺼내 보세요.</div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap">Spring 입문 주차 수강 가이드 보조 자료</div></footer>
+
+<script>
+(function(){
+var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")}
+
+/* ===== 흐름 ===== */
+var P = [
+  {e:"💻",r:"사용자",j:"요청을 보내요",sp:"브라우저 / 앱",ch:1},
+  {e:"📥",r:"요청 받는 부분",j:"요청을 받고 결과를 돌려줘요",sp:"Controller",ch:2},
+  {e:"⚙️",r:"처리하는 부분",j:"규칙대로 일을 처리해요",sp:"Service",ch:3},
+  {e:"💾",r:"저장하는 부분",j:"데이터를 보관해요",sp:"Repository · DB",ch:3}
+];
+var lane = document.getElementById("lane"), token = document.getElementById("token");
+P.forEach(function(p,i){
+  var d = document.createElement("div");
+  d.className = "person k"+p.ch; d.id = "p"+i;
+  d.innerHTML = "<span class='bubble'></span><span class='emo'>"+p.e+"</span><span class='role'>"+p.r+"</span><span class='job'>"+p.j+"</span><span class='sp'>"+p.sp+"</span>";
+  lane.appendChild(d);
+});
+var SEQ = [
+  [0,"📨","1번 게시글 보여 주세요","사용자가 서버에 요청을 보내요. 주소는 /posts/1"],
+  [1,"📨","1번 글 조회 요청이 왔다","요청 받는 부분이 주소를 보고 어떤 요청인지 확인해요."],
+  [2,"📨","1번 글을 찾아와야지","처리하는 부분이 할 일을 정해요. 글이 없으면 ‘없음’이라고 답할지도 여기서 정해요."],
+  [3,"📄","1번 글 여기 있어요","저장된 데이터에서 1번 글을 꺼내요."],
+  [2,"📄","찾았다, 돌려보내자","꺼낸 데이터가 다시 거꾸로 올라가요."],
+  [1,"📄","응답 보냅니다","요청 받는 부분이 결과를 응답으로 만들어 돌려줘요."],
+  [0,"📄","{ 제목: 첫 글, 내용: … }","사용자가 응답을 받았어요. 요청 → 처리 → 응답, 이 한 바퀴가 서버가 하는 일이에요."]
+];
+var running = false, note = document.getElementById("shopNote");
+document.getElementById("order").addEventListener("click", function(){
+  if(running) return; running = true;
+  var btn = this; btn.disabled = true; var i = 0;
+  (function tick(){
+    document.querySelectorAll(".person").forEach(function(x){x.classList.remove("on","talk")});
+    if(i >= SEQ.length){ btn.disabled = false; btn.textContent = "▶ 다시 보기"; running = false; return; }
+    var s = SEQ[i], el = document.getElementById("p"+s[0]);
+    token.textContent = s[1];
+    token.style.left = ((s[0]+0.5)/4*100)+"%";
+    el.querySelector(".bubble").textContent = s[2];
+    el.classList.add("on","talk");
+    note.textContent = s[3];
+    i++; setTimeout(tick, reduce ? 1700 : 1500);
+  })();
+});
+var namesBtn = document.getElementById("names"), shopBox = document.getElementById("shopBox");
+namesBtn.addEventListener("click", function(){
+  var on = shopBox.classList.toggle("names-on");
+  namesBtn.setAttribute("aria-pressed", on);
+  namesBtn.textContent = on ? "이름 숨기기" : "스프링에서 부르는 이름 보기";
+});
+
+document.querySelectorAll(".word").forEach(function(w){
+  w.addEventListener("click", function(){ w.classList.toggle("open"); });
+});
+
+/* ===== 챕터 1 ===== */
+var open = false;
+var power = document.getElementById("power"), powerTxt = document.getElementById("powerTxt");
+power.addEventListener("click", function(){
+  open = !open; power.setAttribute("aria-checked", open);
+  powerTxt.innerHTML = open ? "<b>서버 실행 중</b> 🟢 요청을 기다리는 중" : "<b>서버 꺼짐</b>";
+});
+var addr = document.getElementById("addr"), page = document.getElementById("page"), ruleLine = document.getElementById("ruleLine");
+function visit(){
+  var path = addr.value.trim().replace(/^https?:\/\//,"").replace(/^localhost:8080/,"");
+  page.classList.remove("err");
+  if(!open){
+    page.classList.add("err");
+    page.innerHTML = "<div><div class='big'>연결할 수 없어요</div><div class='sm'>서버가 꺼져 있으면 요청을 받을 수 없어요. 왼쪽 스위치로 서버를 켜 주세요.</div></div>";
+    return;
+  }
+  if(path === "/hello"){
+    ruleLine.classList.add("lit"); setTimeout(function(){ ruleLine.classList.remove("lit"); }, 1200);
+    page.innerHTML = "<div><div class='big'>"+esc(document.getElementById("msg").value || " ")+"</div><div class='sm'>정해 둔 규칙대로 서버가 응답했어요</div></div>";
+  } else {
+    page.classList.add("err");
+    page.innerHTML = "<div><div class='big'>404 · 찾을 수 없음</div><div class='sm'>"+esc(path||"/")+" 주소에 대한 규칙을 만들지 않았어요.</div></div>";
+  }
+}
+document.getElementById("go").addEventListener("click", visit);
+addr.addEventListener("keydown", function(e){ if(e.key==="Enter") visit(); });
+document.querySelectorAll(".chip").forEach(function(c){ c.addEventListener("click", function(){ addr.value = c.dataset.a; visit(); }); });
+
+/* ===== 챕터 2 ===== */
+var ORDERS = [
+  {say:"1번 글을 보여 주세요", ad:"GET /posts/1", a:"one", bind:"주소의 <code>1</code> → <code>id = 1</code>", rep:'{ "id": 1, "title": "첫 글" }'},
+  {say:"‘스프링’이 들어간 글을 찾아 주세요", ad:"GET /posts?keyword=스프링", a:"search", bind:"물음표 뒤 <code>keyword=스프링</code> → <code>keyword = \"스프링\"</code>", rep:'[ { "title": "스프링 시작" }, { "title": "스프링 정리" } ]'},
+  {say:"새 글을 올려 주세요", ad:'POST /posts  + { "title": "오늘 배운 것" }', a:"add", bind:'함께 보낸 JSON → 자바 객체의 <code>title = "오늘 배운 것"</code>', rep:'{ "id": 3, "title": "오늘 배운 것" }'},
+  {say:"7번 글을 보여 주세요", ad:"GET /posts/7", a:"one", bind:"주소의 <code>7</code> → <code>id = 7</code>", rep:'{ "id": 7, "title": "자바 복습" }'},
+  {say:"‘과제’가 들어간 글을 찾아 주세요", ad:"GET /posts?keyword=과제", a:"search", bind:"물음표 뒤 <code>keyword=과제</code> → <code>keyword = \"과제\"</code>", rep:'[ { "title": "과제 제출 방법" } ]'}
+];
+var oi = 0, score = 0, tries = 0, done = false;
+var wins = document.querySelectorAll(".win"), fb = document.getElementById("feedback"), nextOrder = document.getElementById("nextOrder");
+function load(){
+  var o = ORDERS[oi]; done = false; tries = 0;
+  document.getElementById("say").textContent = "“"+o.say+"”";
+  document.getElementById("taddr").textContent = o.ad;
+  wins.forEach(function(w){ w.classList.remove("right","wrong"); w.disabled = false; });
+  fb.textContent = "요청 주소를 잘 읽고 골라 보세요.";
+  nextOrder.hidden = true;
+  document.getElementById("score").textContent = (oi+1)+" / "+ORDERS.length+"번째 요청 · 한 번에 맞힌 수 "+score;
+}
+wins.forEach(function(w){
+  w.addEventListener("click", function(){
+    if(done) return;
+    var o = ORDERS[oi];
+    if(w.dataset.m === o.a){
+      done = true; if(tries===0) score++;
+      w.classList.add("right");
+      wins.forEach(function(x){ if(x!==w) x.disabled = true; });
+      fb.innerHTML = "⭕ 맞아요! DispatcherServlet이 주소를 보고 <b>"+w.querySelector("b").textContent+"</b> 코드로 보냈어요.<div class='binding'>🔗 데이터 바인딩: "+o.bind+"</div><div class='reply'><span class='emo'>📄</span><span class='card'>사용자에게 보낸 응답 (JSON)<br><span class='mono' style='font-size:14px'>"+esc(o.rep)+"</span></span></div>";
+      nextOrder.hidden = false;
+      nextOrder.textContent = oi === ORDERS.length-1 ? "처음부터 다시" : "다음 요청";
+      document.getElementById("score").textContent = (oi+1)+" / "+ORDERS.length+"번째 요청 · 한 번에 맞힌 수 "+score;
+    } else {
+      tries++;
+      w.classList.remove("wrong"); void w.offsetWidth; w.classList.add("wrong");
+      fb.textContent = "❌ 이 코드가 아니에요. " + (o.a==="add" ? "새로 만들어 달라는 요청이에요." : o.a==="search" ? "주소에 물음표(?)가 보이죠?" : "주소 끝에 번호가 붙어 있죠?");
+    }
+  });
+});
+nextOrder.addEventListener("click", function(){ oi++; if(oi >= ORDERS.length){ oi = 0; score = 0; } load(); });
+load();
+
+/* ===== 1-1 Spring ===== */
+var TASKS = ["요청 받기","주소별로 코드 연결","응답을 JSON으로 바꾸기","데이터베이스 연결","오류 처리","로그인·보안","여러 요청 동시에 처리"];
+var spOn = false, tasksEl = document.getElementById("tasks");
+function drawSp(){
+  var h = TASKS.map(function(t,i){ return "<div class='task"+(spOn?" sp":"")+"' style='transition-delay:"+(reduce?0:i*70)+"ms'>"+t+"<small>"+(spOn?"🌱 Spring이 제공":"🔨 내가 직접")+"</small></div>"; }).join("");
+  h += "<div class='task mine'>📝 게시글 저장 규칙 같은 내 서비스 기능<small>✍️ 이건 항상 내가</small></div>";
+  tasksEl.innerHTML = h;
+  document.getElementById("spCount").textContent = "내가 만들 것: " + (spOn ? "1개" : (TASKS.length+1)+"개");
+}
+var spSw = document.getElementById("spSw");
+spSw.addEventListener("click", function(){
+  spOn = !spOn; spSw.setAttribute("aria-checked", spOn);
+  document.getElementById("spTxt").innerHTML = spOn ? "<b>Spring 사용</b> · 공통 기능은 Spring이 맡아요" : "<b>Spring 없이</b> 서버를 처음부터 만들기";
+  tasksEl.querySelectorAll(".task:not(.mine)").forEach(function(t,i){ setTimeout(function(){ t.classList.toggle("sp", spOn); t.querySelector("small").textContent = spOn?"🌱 Spring이 제공":"🔨 내가 직접"; }, reduce?0:i*90); });
+  document.getElementById("spCount").textContent = "내가 만들 것: " + (spOn ? "1개 · 나머지는 Spring이 해 줘요" : (TASKS.length+1)+"개");
+});
+drawSp();
+
+/* ===== 1-2 Spring Boot ===== */
+var BSTEPS = ["필요한 라이브러리 고르고 버전 맞추기","설정 파일 직접 작성하기","서버 프로그램(Tomcat) 따로 설치하기","내 코드를 서버 프로그램에 올리기","서버 실행하기"];
+var bMode = "spring", bDone = 0, bsEl = document.getElementById("bsteps"), con = document.getElementById("console"), bootMsg = document.getElementById("bootMsg"), bootRun = document.getElementById("bootRun");
+var SPRING_LOG = ["라이브러리 버전 확인 중… 서로 맞는 버전 찾기 완료","applicationContext.xml 설정 50줄 작성 완료","Tomcat 다운로드 및 설치 완료","board.war 파일을 Tomcat에 복사 완료","Tomcat 시작… 서버가 켜졌어요 (port 8080)"];
+function drawB(){
+  bsEl.innerHTML = BSTEPS.map(function(t,i){
+    var d = i < bDone;
+    return "<button class='bstep"+(d?" done":"")+"' data-i='"+i+"'"+((bMode==="boot"||d)?" disabled":"")+"><span class='ck'>"+(d?"✓":i+1)+"</span>"+t+(bMode==="boot"&&d?"<span class='auto'>Boot가 자동으로</span>":"")+"</button>";
+  }).join("");
+  bsEl.querySelectorAll(".bstep").forEach(function(b){
+    b.addEventListener("click", function(){
+      var i = +b.dataset.i;
+      if(i !== bDone){ bootMsg.textContent = "순서대로 해야 해요. "+(bDone+1)+"번부터 눌러 주세요."; return; }
+      bDone++; con.textContent += SPRING_LOG[i] + "\n$ ";
+      bootMsg.textContent = bDone < 5 ? "직접 한 단계: "+bDone+" / 5" : "드디어 서버가 켜졌어요! 직접 5단계를 거쳐야 했죠. 이번엔 ‘Spring Boot로’를 눌러 보세요.";
+      drawB();
+    });
+  });
+}
+document.querySelectorAll(".seg [data-mode]").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll(".seg [data-mode]").forEach(function(x){ x.setAttribute("aria-pressed", x===b); });
+    bMode = b.dataset.mode; bDone = 0; con.textContent = "$ ";
+    bootRun.hidden = bMode !== "boot"; bootRun.disabled = false;
+    bootMsg.textContent = bMode==="boot" ? "Spring Boot에서는 main 실행 버튼 하나만 누르면 돼요." : "위 단계를 1번부터 차례로 눌러 보세요.";
+    drawB();
+  });
+});
+bootRun.addEventListener("click", function(){
+  bootRun.disabled = true; con.textContent = "$ ./gradlew bootRun\n";
+  var lines = [" :: Spring Boot ::","필요한 라이브러리를 맞는 버전으로 자동 준비","기본 설정 자동 적용","내장 Tomcat 준비 완료","Tomcat started on port 8080","Started BoardApplication in 1.3 seconds"];
+  var i = 0;
+  (function tick(){
+    if(i < 5){ bDone = i+1; drawB(); }
+    con.textContent += lines[i] + "\n";
+    i++;
+    if(i < lines.length) setTimeout(tick, reduce?60:280);
+    else bootMsg.innerHTML = "✅ 버튼 <b>한 번</b>으로 5단계가 전부 끝났어요. 이게 Spring Boot예요. 아래 3번에서 켜진 서버에 요청을 보내 볼게요.";
+  })();
+});
+drawB();
+
+/* ===== 2-1 MVC ===== */
+var MLINES = [["C","주소 /posts/1 요청 받기"],["M","1번 글 데이터 (제목, 내용)"],["V","제목은 굵게, 파란색으로 보여 주기"],["C","어떤 데이터를 어떤 화면에 보여 줄지 정하기"],["M","제목은 비어 있으면 안 된다는 규칙"],["V","화면 맨 위에 로고 넣기"]];
+var mvcMode = "mix", mvcArea = document.getElementById("mvcArea"), mvcMsg = document.getElementById("mvcMsg");
+var MNAME = {M:"Model · 데이터",V:"View · 화면",C:"Controller · 요청 받고 연결"};
+function line(l){ return "<div class='mvcline'><i class='"+l[0]+"'>"+l[0]+"</i>"+l[1]+"</div>"; }
+function drawMvc(){
+  if(mvcMode==="mix"){
+    mvcArea.innerHTML = "<div class='mvcbox' data-box='all'><h4>📄 PostPage.java (하나의 파일에 전부)</h4>"+[MLINES[2],MLINES[0],MLINES[4],MLINES[5],MLINES[1],MLINES[3]].map(line).join("")+"</div>";
+  } else {
+    mvcArea.innerHTML = "<div class='split3'>"+["M","V","C"].map(function(k){ return "<div class='mvcbox' data-box='"+k+"'><h4>"+MNAME[k]+"</h4>"+MLINES.filter(function(l){return l[0]===k}).map(line).join("")+"</div>"; }).join("")+"</div>";
+  }
+}
+document.querySelectorAll(".seg [data-mvc]").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll(".seg [data-mvc]").forEach(function(x){ x.setAttribute("aria-pressed", x===b); });
+    mvcMode = b.dataset.mvc; drawMvc();
+    mvcMsg.textContent = mvcMode==="split" ? "역할별로 나눴어요. 같은 버튼을 다시 눌러 보세요." : "모든 코드가 한 파일에 섞여 있어요.";
+  });
+});
+var CH = {V:"화면 디자인", M:"데이터 항목", C:"주소 연결"};
+document.querySelectorAll("[data-change]").forEach(function(b){
+  b.addEventListener("click", function(){
+    var k = b.dataset.change;
+    mvcArea.querySelectorAll(".mvcbox").forEach(function(x){ x.classList.remove("glow","burn"); });
+    if(mvcMode==="mix"){
+      var box = mvcArea.querySelector(".mvcbox"); void box.offsetWidth; box.classList.add("burn");
+      mvcMsg.innerHTML = "😵 "+CH[k]+"만 바꾸고 싶은데, 다른 코드와 섞여 있어서 <b>파일 전체를 뒤져야</b> 해요. 잘못 건드리면 다른 기능이 망가질 수도 있어요.";
+    } else {
+      var t = mvcArea.querySelector("[data-box='"+k+"']"); void t.offsetWidth; t.classList.add("glow");
+      mvcMsg.innerHTML = "😊 <b>"+MNAME[k].split(" · ")[0]+"</b>만 고치면 끝! 나머지는 건드리지 않아도 돼요. 이게 역할을 나누는 이유예요."+(k==="V"?" (API를 만들 때는 View 자리에 JSON 응답이 와요.)":"");
+    }
+  });
+});
+drawMvc();
+
+/* ===== 2-2 DispatcherServlet ===== */
+var dsBox = document.getElementById("dsBox"), dsSay = document.getElementById("dsSay"), dsMsg = document.getElementById("dsMsg"), dsBusy = false;
+document.querySelectorAll(".rq").forEach(function(b){
+  b.addEventListener("click", function(){
+    if(dsBusy) return; dsBusy = true;
+    document.querySelectorAll(".rq").forEach(function(x){ x.classList.remove("on"); });
+    document.querySelectorAll(".ctl").forEach(function(x){ x.classList.remove("on","miss"); });
+    b.classList.add("on");
+    dsBox.classList.add("on"); dsSay.textContent = "주소 확인: "+b.dataset.path;
+    dsMsg.textContent = "① 요청이 DispatcherServlet에 먼저 도착했어요. 주소를 읽는 중…";
+    setTimeout(function(){
+      dsBox.classList.remove("on");
+      var to = b.dataset.to;
+      if(to){
+        var c = document.querySelector(".ctl[data-c='"+to+"']"); c.classList.add("on");
+        dsSay.textContent = "→ "+c.textContent.replace(/^.*담당/,"");
+        dsMsg.innerHTML = "② 주소가 <b>"+b.dataset.path.split("/").slice(0,2).join("/")+"</b>로 시작하니까 <b>"+c.textContent.replace(/^.*담당/,"")+"</b>에게 넘겼어요.";
+      } else {
+        document.querySelectorAll(".ctl").forEach(function(x){ x.classList.add("miss"); });
+        dsSay.textContent = "→ 담당자 없음";
+        dsMsg.innerHTML = "② 이 주소를 맡은 Controller가 없어요. DispatcherServlet이 <b>404 (찾을 수 없음)</b> 응답을 보냈어요.";
+      }
+      dsBusy = false;
+    }, reduce ? 300 : 1100);
+  });
+});
+
+/* ===== 2-4 JSON ===== */
+var jOut = document.getElementById("jOut"), jNoKey = false, jFocus = null;
+function jv(){ return {title:document.getElementById("jTitle").value, writer:document.getElementById("jWriter").value, views:parseInt(document.getElementById("jViews").value,10)||0, published:document.getElementById("jPub").checked}; }
+function drawJ(){
+  var o = jv(), keys = ["title","writer","views","published"];
+  function val(k){ return typeof o[k]==="string" ? '"'+esc(o[k])+'"' : String(o[k]); }
+  if(jNoKey){
+    jOut.innerHTML = keys.map(function(k){ return "<span class='v"+(jFocus===k?" hl":"")+"'>"+esc(String(o[k]))+"</span>"; }).join(", ");
+    document.getElementById("jMsg").innerHTML = "🤔 이름표를 빼니까 <b>"+o.views+"</b>이 조회수인지, 글 번호인지 알 수가 없어요. 그래서 JSON은 꼭 <b>\"이름\": 값</b>으로 적어요.";
+  } else {
+    jOut.innerHTML = "{\n" + keys.map(function(k,i){ return "  <span class='"+(jFocus===k?"hl":"")+"'><span class='k'>\""+k+"\"</span>: <span class='v'>"+val(k)+"</span>"+(i<3?",":"")+"</span>"; }).join("\n") + "\n}";
+    document.getElementById("jMsg").innerHTML = "왼쪽 값을 바꾸면 JSON도 바로 바뀌어요. 글자는 \" \"로 감싸고, 숫자와 참/거짓(true/false)은 그대로 적어요.";
+  }
+}
+document.querySelectorAll(".form [data-k]").forEach(function(inp){
+  inp.addEventListener("input", drawJ); inp.addEventListener("change", drawJ);
+  inp.addEventListener("focus", function(){ jFocus = inp.dataset.k; drawJ(); });
+});
+var jSw = document.getElementById("jNoKey");
+jSw.addEventListener("click", function(){ jNoKey = !jNoKey; jSw.setAttribute("aria-checked", jNoKey); drawJ(); });
+drawJ();
+
+/* ===== 2-5 데이터 바인딩 ===== */
+var bTab = "path", bNoBind = false;
+var bReq = document.getElementById("bReq"), bJava = document.getElementById("bJava"), bVal = document.getElementById("bVal"), bMsg = document.getElementById("bMsg");
+var BT = {
+  path:{req:'GET /posts/<input id="bIn" value="3" aria-label="글 번호">', java:'@GetMapping("/posts/{id}")\npublic Post getPost(@PathVariable Long id)', raw:'String url = request.getRequestURI();\nString[] parts = url.split("/");\nLong id = Long.parseLong(parts[2]);', out:function(v){ return "id = "+(parseInt(v,10)||0); }, where:"주소 안의 값"},
+  query:{req:'GET /posts?keyword=<input id="bIn" value="스프링" aria-label="검색어">', java:'@GetMapping("/posts")\npublic List<Post> search(@RequestParam String keyword)', raw:'String query = request.getQueryString();\nString[] pair = query.split("=");\nString keyword = URLDecoder.decode(pair[1], "UTF-8");', out:function(v){ return 'keyword = "'+v+'"'; }, where:"물음표 뒤의 값"},
+  body:{req:'POST /posts\n{ "title": "<input id="bIn" value="오늘 배운 것" aria-label="제목">" }', java:'@PostMapping("/posts")\npublic Post create(@RequestBody PostRequest request)', raw:'String body = request.getReader().lines()\n    .collect(Collectors.joining());\n// JSON 글자를 직접 잘라서 title 찾기…\nString title = body.split("\\"title\\": \\"")[1].split("\\"")[0];', out:function(v){ return 'request.title = "'+v+'"'; }, where:"본문 JSON"}
+};
+function drawBind(){
+  var t = BT[bTab];
+  bReq.innerHTML = t.req.replace(/\n/g,"<br>");
+  bJava.textContent = bNoBind ? t.raw : t.java;
+  bVal.textContent = ""; bVal.classList.remove("fly");
+  document.getElementById("bIn").addEventListener("keydown", function(e){ if(e.key==="Enter") send(); });
+}
+function send(){
+  var v = document.getElementById("bIn").value, t = BT[bTab];
+  bVal.classList.remove("fly"); void bVal.offsetWidth;
+  bVal.textContent = t.out(esc(v)).replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">"); bVal.classList.add("fly");
+  var lines = t.raw.split("\n").length;
+  bMsg.innerHTML = bNoBind ? "😓 "+t.where+"을 꺼내려고 <b>"+lines+"줄</b>을 직접 써야 했어요. 형식이 조금만 달라도 오류가 나기 쉬워요." : "✨ "+t.where+"을 스프링이 꺼내서 <b>변수에 자동으로</b> 넣어 줬어요. 이게 데이터 바인딩이에요.";
+}
+document.getElementById("bSend").addEventListener("click", send);
+document.querySelectorAll(".seg [data-b]").forEach(function(b){
+  b.addEventListener("click", function(){
+    document.querySelectorAll(".seg [data-b]").forEach(function(x){ x.setAttribute("aria-pressed", x===b); });
+    bTab = b.dataset.b; drawBind();
+    bMsg.textContent = "값을 바꾸고 ‘요청 보내기’를 눌러 보세요.";
+  });
+});
+var bSw = document.getElementById("bNo");
+bSw.addEventListener("click", function(){ bNoBind = !bNoBind; bSw.setAttribute("aria-checked", bNoBind); var keep = document.getElementById("bIn").value; drawBind(); document.getElementById("bIn").value = keep; bMsg.textContent = bNoBind ? "이제 요청 보내기를 눌러, 직접 꺼내는 코드와 비교해 보세요." : "다시 스프링이 바인딩해 줘요."; });
+drawBind();
+
+/* ===== 챕터 3 ① DB ===== */
+var memA = [], memNext = 1, dbA = [], dbNext = 1;
+var lMem = document.getElementById("lMem"), lDb = document.getElementById("lDb"), aMsg = document.getElementById("aMsg");
+function drawA(newMem, newDb){
+  lMem.innerHTML = memA.length ? memA.map(function(x){ return "<span class='pill"+(x.id===newMem?" new":"")+"'>📝 "+x.id+". "+esc(x.t)+"</span>"; }).join("") : "<span class='none'>비어 있어요</span>";
+  lDb.innerHTML = dbA.length ? dbA.map(function(x){ return "<span class='pill"+(x.id===newDb?" new":"")+"'>📝 "+x.id+". "+esc(x.t)+"</span>"; }).join("") : "<span class='none'>비어 있어요</span>";
+}
+function aTitle(){ return document.getElementById("aTitle").value.trim() || "새 글"; }
+document.getElementById("aMem").addEventListener("click", function(){ var x={id:memNext++,t:aTitle()}; memA.push(x); aMsg.textContent = "서버 메모리에 저장했어요."; drawA(x.id); });
+document.getElementById("aDb").addEventListener("click", function(){ var x={id:dbNext++,t:aTitle()}; dbA.push(x); aMsg.textContent = "데이터베이스에 저장했어요."; drawA(null,x.id); });
+document.getElementById("aRestart").addEventListener("click", function(){
+  var z = document.getElementById("zMem"), btn = this; btn.disabled = true;
+  z.classList.add("off"); aMsg.textContent = "🔄 서버를 끄는 중… 서버 안에 있던 것들도 함께 꺼져요.";
+  setTimeout(function(){
+    var n = memA.length; memA = []; memNext = 1;
+    z.classList.remove("off"); btn.disabled = false; drawA();
+    aMsg.innerHTML = (n ? "😱 서버 메모리의 글 "+n+"개가 <b>사라졌어요</b>. " : "서버 메모리는 원래 비어 있었어요. ") +
+      (dbA.length ? "💾 DB의 글 "+dbA.length+"개는 <b>그대로 남았어요</b>. DB는 서버 밖에 따로 있으니까요." : "DB에도 글을 저장하고 다시 해 보세요.");
+  }, reduce ? 300 : 1000);
+});
+drawA();
+
+/* ===== ② 관계형 DB ===== */
+var tM = document.getElementById("tMember"), tP = document.getElementById("tPost"), rMsg = document.getElementById("rMsg");
+function clearRel(){ document.querySelectorAll(".rtable .hl,.rtable .key").forEach(function(e){ e.classList.remove("hl","key"); }); document.querySelectorAll(".chipbar button").forEach(function(b){ b.setAttribute("aria-pressed","false"); }); }
+var NAMES = {"1":"김스파","2":"이자바"};
+tP.querySelectorAll("tbody tr").forEach(function(tr){
+  tr.tabIndex = 0;
+  function go(){
+    clearRel(); tr.classList.add("hl");
+    tr.querySelector("[data-c='pmid']").classList.add("key");
+    var m = tM.querySelector("tr[data-m='"+tr.dataset.m+"']"); m.classList.add("hl"); m.querySelector("[data-c='mid']").classList.add("key");
+    rMsg.innerHTML = "‘"+tr.children[1].textContent+"’의 <b>member_id는 "+tr.dataset.m+"</b> → member 표의 "+tr.dataset.m+"번 줄, <b>"+NAMES[tr.dataset.m]+"</b>님이 쓴 글이에요. 이렇게 번호로 두 표가 연결되는 게 ‘관계’예요.";
+  }
+  tr.addEventListener("click", go); tr.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } });
+});
+tM.querySelectorAll("tbody tr").forEach(function(tr){
+  tr.tabIndex = 0;
+  function go(){
+    clearRel(); tr.classList.add("hl"); tr.querySelector("[data-c='mid']").classList.add("key");
+    var ps = tP.querySelectorAll("tr[data-m='"+tr.dataset.m+"']");
+    ps.forEach(function(p){ p.classList.add("hl"); p.querySelector("[data-c='pmid']").classList.add("key"); });
+    rMsg.innerHTML = "<b>"+NAMES[tr.dataset.m]+"</b>님(id "+tr.dataset.m+")이 쓴 글은 post 표에서 member_id가 "+tr.dataset.m+"인 줄 <b>"+ps.length+"개</b>예요.";
+  }
+  tr.addEventListener("click", go); tr.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } });
+});
+document.querySelectorAll(".chipbar button").forEach(function(b){
+  b.addEventListener("click", function(){
+    clearRel(); b.setAttribute("aria-pressed","true");
+    if(b.dataset.show==="row"){
+      var r = tP.querySelector("tr[data-p='2']"); r.classList.add("hl");
+      rMsg.innerHTML = "<b>줄(행)</b> 하나가 데이터 하나예요. 강조된 줄은 ‘2번 글’ 한 개의 정보 전부예요.";
+    } else {
+      tP.querySelectorAll("[data-c='ptitle']").forEach(function(c){ c.classList.add("hl"); });
+      rMsg.innerHTML = "<b>칸(열)</b>은 항목이에요. title 칸에는 모든 글의 ‘제목’만 모여 있어요.";
+    }
+  });
+});
+
+/* ===== ③ Repository · JPA · CRUD ===== */
+var cRows = [{id:1,t:"첫 글"},{id:2,t:"스프링 시작"}], cNext = 3, cSel = null, noJpa = false;
+var cTable = document.getElementById("cTable"), pCode = document.getElementById("pCode"), pSql = document.getElementById("pSql"), jpaBox = document.getElementById("jpaBox"), cMsg = document.getElementById("cMsg");
+var mths = document.querySelectorAll(".mth");
+function drawC(fx, id){
+  var h = "<thead><tr><th>id</th><th>title</th></tr></thead><tbody>";
+  if(!cRows.length) h += "<tr><td colspan='2' style='color:var(--muted)'>비어 있어요</td></tr>";
+  cRows.forEach(function(r){ h += "<tr tabindex='0' data-id='"+r.id+"' class='"+(cSel===r.id?"sel":"")+(id===r.id&&fx?" "+fx:"")+"'><td>"+r.id+"</td><td>"+esc(r.t)+"</td></tr>"; });
+  cTable.innerHTML = h + "</tbody>";
+  cTable.querySelectorAll("tbody tr[data-id]").forEach(function(tr){
+    function go(){ cSel = +tr.dataset.id; mths.forEach(function(m){ m.disabled = false; }); cMsg.textContent = cSel+"번 줄을 골랐어요. 이제 findById, 제목 수정, delete를 눌러 보세요."; drawC(); }
+    tr.addEventListener("click", go); tr.addEventListener("keydown", function(e){ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); go(); } });
+  });
+}
+function lightCrud(op){
+  document.querySelectorAll(".crud span").forEach(function(x){ x.classList.toggle("on", x.dataset.l===op); });
+  mths.forEach(function(m){ m.classList.toggle("on", m.dataset.op===op); });
+  jpaBox.classList.remove("go"); void jpaBox.offsetWidth; if(!noJpa) jpaBox.classList.add("go");
+}
+function findC(id){ return cRows.filter(function(r){ return r.id===id; })[0]; }
+mths.forEach(function(m){
+  m.addEventListener("click", function(){
+    var op = m.dataset.op, code, sqlT, r;
+    if(op==="C"){
+      var t = document.getElementById("cTitle").value.trim() || "새 글";
+      r = {id:cNext++, t:t}; cRows.push(r);
+      code = noJpa ? 'String sql = "INSERT INTO post (title) VALUES (?)";\nPreparedStatement ps = conn.prepareStatement(sql);\nps.setString(1, "'+t+'");\nps.executeUpdate();' : 'postRepository.save(new Post("'+t+'"));';
+      sqlT = "INSERT INTO post (title) VALUES ('"+t+"');";
+      cMsg.innerHTML = "<b>C</b>reate · "+r.id+"번 줄이 생겼어요.";
+      lightCrud(op); show(code, sqlT); drawC("new", r.id); return;
+    }
+    r = findC(cSel); if(!r) return;
+    if(op==="R"){
+      code = noJpa ? 'String sql = "SELECT * FROM post WHERE id = ?";\nPreparedStatement ps = conn.prepareStatement(sql);\nps.setLong(1, '+r.id+');\nResultSet rs = ps.executeQuery();\nrs.next();\nPost post = new Post(rs.getLong("id"), rs.getString("title"));' : 'Post post = postRepository.findById('+r.id+'L).get();';
+      sqlT = "SELECT * FROM post WHERE id = "+r.id+";";
+      cMsg.innerHTML = "<b>R</b>ead · "+r.id+"번 글 ‘"+esc(r.t)+"’을(를) 꺼냈어요.";
+      lightCrud(op); show(code, sqlT); drawC("look", r.id);
+    } else if(op==="U"){
+      var nt = r.t.indexOf("(수정)")>-1 ? r.t : r.t+" (수정)"; r.t = nt;
+      code = noJpa ? 'String sql = "UPDATE post SET title = ? WHERE id = ?";\nPreparedStatement ps = conn.prepareStatement(sql);\nps.setString(1, "'+nt+'");\nps.setLong(2, '+r.id+');\nps.executeUpdate();' : 'post.changeTitle("'+nt+'");\n// 수정은 save()도 필요 없어요 (4번에서 확인!)';
+      sqlT = "UPDATE post SET title = '"+nt+"' WHERE id = "+r.id+";";
+      cMsg.innerHTML = "<b>U</b>pdate · "+r.id+"번 글 제목을 바꿨어요.";
+      lightCrud(op); show(code, sqlT); drawC("look", r.id);
+    } else {
+      code = noJpa ? 'String sql = "DELETE FROM post WHERE id = ?";\nPreparedStatement ps = conn.prepareStatement(sql);\nps.setLong(1, '+r.id+');\nps.executeUpdate();' : 'postRepository.delete(post);';
+      sqlT = "DELETE FROM post WHERE id = "+r.id+";";
+      cRows = cRows.filter(function(x){ return x.id!==r.id; }); cSel = null;
+      mths.forEach(function(x){ if(x.dataset.op!=="C") x.disabled = true; });
+      cMsg.innerHTML = "<b>D</b>elete · "+r.id+"번 줄이 지워졌어요.";
+      lightCrud(op); show(code, sqlT); drawC();
+    }
+  });
+});
+function show(code, sqlT){
+  pCode.textContent = code;
+  pSql.textContent = noJpa ? sqlT + "\n\n✋ JPA가 없어서 SQL을 내가 직접 썼어요" : sqlT + "\n\n✨ 내가 쓴 적 없는데 JPA가 만들어 줬어요";
+  var lines = code.split("\n").filter(function(l){ return l.indexOf("//")!==0; }).length;
+  if(noJpa) cMsg.innerHTML += " 코드가 <b>"+lines+"줄</b>이나 필요했어요. JPA를 쓰면 보통 1줄이면 돼요.";
+}
+var noJpaSw = document.getElementById("noJpa");
+noJpaSw.addEventListener("click", function(){
+  noJpa = !noJpa; noJpaSw.setAttribute("aria-checked", noJpa);
+  jpaBox.classList.toggle("off", noJpa);
+  jpaBox.innerHTML = noJpa ? "<span class='big'>🚫</span>JPA<br>없음" : "<span class='big'>🔁</span>JPA가<br>번역";
+  document.getElementById("noJpaTxt").textContent = noJpa ? "JPA 없이 직접 쓰는 중 · 다시 끄면 JPA 사용" : "JPA 없이 직접 쓰면?";
+  cMsg.textContent = noJpa ? "같은 기능을 다시 눌러 코드 길이를 비교해 보세요." : "다시 JPA를 써요.";
+});
+drawC();
+
+/* ===== ④ 영속성 컨텍스트 ===== */
+var kDbT = "첫 글", kObj = null, kLog = [];
+var ctx = document.getElementById("ctx"), kDb = document.getElementById("kDb"), kMsg = document.getElementById("kMsg"), kLogEl = document.getElementById("kLog");
+var k1 = document.getElementById("k1"), k2 = document.getElementById("k2"), k3 = document.getElementById("k3");
+function drawK(flash){
+  kDb.innerHTML = "post 1번 · <b>"+esc(kDbT)+"</b>";
+  if(flash){ kDb.classList.remove("flash"); void kDb.offsetWidth; kDb.classList.add("flash"); }
+  if(!kObj){ ctx.innerHTML = "<span class='none'>비어 있어요</span>"; }
+  else {
+    var changed = kObj.now !== kObj.first;
+    ctx.innerHTML = "<div class='ctxcard'><div class='lbl'>📸 처음 모습 (기억해 둔 것)</div><div>"+esc(kObj.first)+"</div><div class='lbl' style='margin-top:6px'>✏️ 지금 모습</div><div>"+(changed?"<span class='diff'>"+esc(kObj.now)+"</span>":esc(kObj.now))+"</div>"+(changed?"<div class='lbl' style='margin-top:6px'>⚠️ 달라진 걸 발견했어요</div>":"")+"</div>";
+  }
+  kLogEl.textContent = kLog.length ? kLog.join("\n") : "아직 없음";
+}
+k1.addEventListener("click", function(){
+  if(kObj){
+    kMsg.innerHTML = "🧠 이미 기억 공간에 있어서 <b>DB에 다시 묻지 않고</b> 바로 꺼냈어요. SQL 기록이 늘지 않았죠?";
+  } else {
+    kObj = {first:kDbT, now:kDbT};
+    kLog.push("SELECT * FROM post WHERE id = 1;");
+    kMsg.innerHTML = "DB에서 1번 글을 꺼냈어요. JPA가 <b>처음 모습</b>을 기억 공간에 찍어 뒀어요. ①을 한 번 더 눌러 보세요.";
+    k2.disabled = k3.disabled = false;
+  }
+  drawK();
+});
+k2.addEventListener("click", function(){
+  var t = document.getElementById("kTitle").value.trim() || "첫 글 (수정)";
+  kObj.now = t;
+  kMsg.innerHTML = "객체의 제목만 바꿨어요. <b>save()를 부르지 않았고</b>, 아직 DB도 그대로예요.";
+  drawK();
+});
+k3.addEventListener("click", function(){
+  if(kObj.now !== kObj.first){
+    kDbT = kObj.now;
+    kLog.push("UPDATE post SET title = '"+kDbT+"' WHERE id = 1;");
+    kMsg.innerHTML = "✅ 작업이 끝나는 순간 JPA가 처음 모습과 지금 모습을 비교했어요. 달라졌으니 <b>UPDATE를 알아서 보냈어요</b>. 기억 공간은 작업이 끝나면 비워져요.";
+    kObj = null; drawK(true);
+  } else {
+    kMsg.innerHTML = "바뀐 게 없어서 JPA가 <b>아무 SQL도 보내지 않았어요</b>. 기억 공간은 작업이 끝나면 비워져요.";
+    kObj = null; drawK();
+  }
+  k2.disabled = k3.disabled = true;
+});
+drawK();
+})();
+</script>
+</body>
+</html>
